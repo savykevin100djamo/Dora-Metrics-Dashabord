@@ -1,6 +1,5 @@
-import { Activity, CalendarIcon, Clock, Palette, Rocket } from "lucide-react";
+import { Activity, CalendarIcon, Clock, Rocket } from "lucide-react";
 import { useEffect, useState } from "react";
-import { ComponentShowcase } from "./components/ComponentShowcase";
 import { DeploymentFrequencyChart } from "./components/DeploymentFrequencyChart";
 import { DeploymentHeatmap } from "./components/DeploymentHeatmap";
 import { LeadTimeChart } from "./components/LeadTimeChart";
@@ -276,17 +275,13 @@ export default function App() {
           ) : null}
         </div>
 
-        {/* Charts */}
-        <Tabs defaultValue="overview" className="space-y-4">
-          <TabsList className="w-full sm:w-auto grid grid-cols-2 sm:grid-cols-4">
-            <TabsTrigger value="overview" className="text-xs sm:text-sm">Overview</TabsTrigger>
-            <TabsTrigger value="frequency" className="text-xs sm:text-sm">Frequency</TabsTrigger>
-            <TabsTrigger value="leadtime" className="text-xs sm:text-sm">Lead Time</TabsTrigger>
-            <TabsTrigger value="showcase" className="text-xs sm:text-sm flex items-center gap-1">
-              <Palette className="h-3 w-3" />
-              <span className="hidden sm:inline">Showcase</span>
-            </TabsTrigger>
-          </TabsList>
+            {/* Charts */}
+            <Tabs defaultValue="overview" className="space-y-4">
+              <TabsList className="inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground">
+                <TabsTrigger value="overview">Overview</TabsTrigger>
+                <TabsTrigger value="frequency">Frequency</TabsTrigger>
+                <TabsTrigger value="leadtime">Lead Time</TabsTrigger>
+              </TabsList>
 
           <TabsContent value="overview" className="space-y-4">
             <div className="grid gap-4 lg:grid-cols-2">
@@ -341,16 +336,6 @@ export default function App() {
             </div>
           </TabsContent>
 
-          <TabsContent value="showcase" className="space-y-4">
-            <div className="rounded-lg border bg-card p-4 mb-6">
-              <h3 className="text-sm mb-1">Component Showcase</h3>
-              <p className="text-xs text-muted-foreground">
-                This page displays all dashboard components in their various states and configurations.
-                Use this as a reference for understanding different performance levels and visual indicators.
-              </p>
-            </div>
-            <ComponentShowcase />
-          </TabsContent>
         </Tabs>
 
         {/* Footer Info */}
