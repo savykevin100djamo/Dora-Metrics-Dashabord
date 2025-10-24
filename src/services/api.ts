@@ -76,10 +76,10 @@ export interface MetricSummary {
 // Données mockées statiques - adaptées pour correspondre aux types backend
 const mockRepositories: Repository[] = [
   { 
-    id: "1", 
-    externalId: "github-1", 
-    repo: "backend-api", 
-    link: "https://github.com/djamo/backend-api", 
+    id: "d891cda4-bad1-41e2-9dbb-6b1ab305f917", 
+    externalId: "test-github-123", 
+    repo: "test-edp-team1-backend", 
+    link: "https://github.com/djamoapp/edp-team1-backend", 
     createdAtExternal: "2024-01-01T00:00:00.000Z", 
     updatedAtExternal: "2024-01-01T00:00:00.000Z" 
   },
@@ -141,131 +141,28 @@ const mockRepositories: Repository[] = [
   },
 ];
 
-// Fonction pour générer des données de déploiement mockées
+// Fonction pour générer des données de déploiement mockées - basée sur les données réelles
 const generateDeploymentData = (period: 'day' | 'week' | 'month', dateRange: { from: Date; to: Date }): DeploymentData[] => {
-  const data: DeploymentData[] = [];
-  const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-  
-  const totalDays = Math.ceil((dateRange.to.getTime() - dateRange.from.getTime()) / (1000 * 60 * 60 * 24));
-  
-  if (period === 'day') {
-    for (let i = totalDays; i >= 0; i--) {
-      const date = new Date(dateRange.to);
-      date.setDate(date.getDate() - i);
-      
-      if (date >= dateRange.from && date <= dateRange.to) {
-        const dayOfWeek = date.getDay();
-        const baseDeployments = dayOfWeek === 0 || dayOfWeek === 6 ? 0 : Math.floor(Math.random() * 5) + 1;
-        const deployments = Math.max(0, baseDeployments + Math.floor(Math.random() * 3) - 1);
-        
-        data.push({
-          date: date.toISOString().split('T')[0],
-          day: `${days[dayOfWeek]} ${date.getDate()}`,
-          deployments,
-        });
-      }
+  // Données basées sur la structure fournie
+  return [
+    {
+      date: "2025-10-01T00:00:00Z",
+      deployments: 16,
+      day: "Wed"
     }
-  } else if (period === 'week') {
-    const weeks = Math.ceil(totalDays / 7);
-    for (let i = weeks; i >= 0; i--) {
-      const date = new Date(dateRange.to);
-      date.setDate(date.getDate() - (i * 7));
-      
-      if (date >= dateRange.from) {
-        const deployments = Math.floor(Math.random() * 25) + 5;
-        
-        data.push({
-          date: date.toISOString().split('T')[0],
-          day: `W${Math.ceil((date.getDate()) / 7)} ${months[date.getMonth()]}`,
-          deployments,
-        });
-      }
-    }
-  } else {
-    const monthsDiff = (dateRange.to.getFullYear() - dateRange.from.getFullYear()) * 12 + 
-                       (dateRange.to.getMonth() - dateRange.from.getMonth());
-    
-    for (let i = monthsDiff; i >= 0; i--) {
-      const date = new Date(dateRange.to);
-      date.setMonth(date.getMonth() - i);
-      
-      const deployments = Math.floor(Math.random() * 80) + 20;
-      
-      data.push({
-        date: date.toISOString().split('T')[0],
-        day: `${months[date.getMonth()]} ${date.getFullYear().toString().slice(2)}`,
-        deployments,
-      });
-    }
-  }
-  
-  return data;
+  ];
 };
 
-// Fonction pour générer des données de lead time mockées
+// Fonction pour générer des données de lead time mockées - basée sur les données réelles
 const generateLeadTimeData = (period: 'day' | 'week' | 'month', dateRange: { from: Date; to: Date }): LeadTimeData[] => {
-  const data: LeadTimeData[] = [];
-  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-  
-  const totalDays = Math.ceil((dateRange.to.getTime() - dateRange.from.getTime()) / (1000 * 60 * 60 * 24));
-  
-  if (period === 'day') {
-    for (let i = totalDays; i >= 0; i--) {
-      const date = new Date(dateRange.to);
-      date.setDate(date.getDate() - i);
-      
-      if (date >= dateRange.from && date <= dateRange.to) {
-        const trend = 30 - (i * 0.5);
-        const leadTime = Math.max(8, trend + (Math.random() * 10 - 5));
-        const average = 18;
-        
-        data.push({
-          date: `${date.getMonth() + 1}/${date.getDate()}`,
-          leadTime: Math.round(leadTime * 10) / 10,
-          average,
-        });
-      }
+  // Données basées sur la structure fournie
+  return [
+    {
+      date: "2025-10-01T00:00:00Z",
+      leadTime: 53.91,
+      average: 53.91
     }
-  } else if (period === 'week') {
-    const weeks = Math.ceil(totalDays / 7);
-    for (let i = weeks; i >= 0; i--) {
-      const date = new Date(dateRange.to);
-      date.setDate(date.getDate() - (i * 7));
-      
-      if (date >= dateRange.from) {
-        const trend = 25 - (i * 0.8);
-        const leadTime = Math.max(10, trend + (Math.random() * 8 - 4));
-        const average = 17;
-        
-        data.push({
-          date: `W${Math.ceil((date.getDate()) / 7)} ${months[date.getMonth()]}`,
-          leadTime: Math.round(leadTime * 10) / 10,
-          average,
-        });
-      }
-    }
-  } else {
-    const monthsDiff = (dateRange.to.getFullYear() - dateRange.from.getFullYear()) * 12 + 
-                       (dateRange.to.getMonth() - dateRange.from.getMonth());
-    
-    for (let i = monthsDiff; i >= 0; i--) {
-      const date = new Date(dateRange.to);
-      date.setMonth(date.getMonth() - i);
-      
-      const trend = 22 - (i * 0.6);
-      const leadTime = Math.max(12, trend + (Math.random() * 6 - 3));
-      const average = 16;
-      
-      data.push({
-        date: `${months[date.getMonth()]} ${date.getFullYear().toString().slice(2)}`,
-        leadTime: Math.round(leadTime * 10) / 10,
-        average,
-      });
-    }
-  }
-  
-  return data;
+  ];
 };
 
 // Fonction pour générer des données de heatmap mockées
@@ -298,12 +195,12 @@ const generateHeatmapData = (period: 'day' | 'week' | 'month', dateRange: { from
   return data;
 };
 
-// Données de distribution du temps mockées
+// Données de distribution du temps mockées - basées sur les données réelles
 const mockTimeDistributionData: TimeDistributionData[] = [
-  { name: "Development", value: 35, color: "#3b82f6" },
-  { name: "Code Review", value: 20, color: "#8b5cf6" },
-  { name: "Testing", value: 25, color: "#10b981" },
-  { name: "Deployment", value: 15, color: "#f59e0b" },
+  { name: "Development", value: 40, color: "#3b82f6" },
+  { name: "Code Review", value: 30, color: "#8b5cf6" },
+  { name: "Testing", value: 15, color: "#10b981" },
+  { name: "Deployment", value: 10, color: "#f59e0b" },
   { name: "Waiting", value: 5, color: "#ef4444" },
 ];
 
@@ -375,12 +272,66 @@ export const apiService = {
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
+      
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        throw new Error('Response is not JSON');
+      }
+      
       const data: LeadTimeResponse = await response.json();
       return data.data;
     } catch (error) {
       console.error('Error fetching lead time:', error);
       // Fallback vers les données mockées en cas d'erreur
       return generateLeadTimeData(period, { from: startDate, to: endDate });
+    }
+  },
+
+  // Récupérer les données de lead time avec distribution du temps
+  getLeadTimeWithDistribution: async (
+    repositoryIds: string[],
+    startDate: Date,
+    endDate: Date,
+    period: 'day' | 'week' | 'month'
+  ): Promise<LeadTimeResponse> => {
+    try {
+      const params = new URLSearchParams({
+        repositoryIds: repositoryIds.join(','),
+        startDate: startDate.toISOString(),
+        endDate: endDate.toISOString(),
+        period: period
+      });
+      
+      const response = await fetch(`${API_BASE_URL}/metrics/lead-time?${params}`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        throw new Error('Response is not JSON');
+      }
+      
+      const data: LeadTimeResponse = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Error fetching lead time with distribution:', error);
+      // Fallback vers les données mockées en cas d'erreur
+      return {
+        data: generateLeadTimeData(period, { from: startDate, to: endDate }),
+        summary: {
+          averageLeadTime: 53.91,
+          medianLeadTime: 53.91,
+          trend: 38
+        },
+        timeDistribution: {
+          development: 40,
+          codeReview: 30,
+          testing: 15,
+          deployment: 10,
+          waiting: 5
+        }
+      };
     }
   },
 
@@ -433,8 +384,14 @@ export const apiService = {
       return data.data || [];
     } catch (error) {
       console.error('Error fetching time distribution:', error);
-      // Fallback vers les données mockées en cas d'erreur
-      return mockTimeDistributionData;
+      // Fallback vers les données mockées en cas d'erreur - basées sur les données réelles
+      return [
+        { name: "Development", value: 40, color: "#3b82f6" },
+        { name: "Code Review", value: 30, color: "#8b5cf6" },
+        { name: "Testing", value: 15, color: "#10b981" },
+        { name: "Deployment", value: 10, color: "#f59e0b" },
+        { name: "Waiting", value: 5, color: "#ef4444" },
+      ];
     }
   },
 
@@ -475,16 +432,16 @@ export const apiService = {
 
       return {
         deploymentFrequency: {
-          value: Math.round(avgDeploymentsPerDay * 10) / 10,
+          value: 0.52,
           unit: 'per day',
-          status: avgDeploymentsPerDay >= 1 ? 'elite' : avgDeploymentsPerDay >= 0.5 ? 'high' : 'medium',
-          trend: 12.5
+          status: 'high',
+          trend: 300
         },
         leadTime: {
-          value: Math.round(avgLeadTime * 10) / 10,
+          value: 53.91,
           unit: 'hours',
-          status: avgLeadTime <= 24 ? 'elite' : avgLeadTime <= 168 ? 'high' : 'medium',
-          trend: -18.3
+          status: 'high',
+          trend: 38
         }
       };
     }
