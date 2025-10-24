@@ -1,19 +1,19 @@
-import { useState, useMemo, useEffect } from "react";
-import { Activity, Clock, Rocket, TrendingUp, Palette, CalendarIcon } from "lucide-react";
-import Progress from "./imports/Progress";
-import { MetricCard } from "./components/MetricCard";
-import { DeploymentFrequencyChart } from "./components/DeploymentFrequencyChart";
-import { LeadTimeChart } from "./components/LeadTimeChart";
-import { DeploymentHeatmap } from "./components/DeploymentHeatmap";
-import { TimeDistributionChart } from "./components/TimeDistributionChart";
+import { Activity, CalendarIcon, Clock, Palette, Rocket } from "lucide-react";
+import { useEffect, useState } from "react";
 import { ComponentShowcase } from "./components/ComponentShowcase";
-import { RepositorySelector, Repository } from "./components/RepositorySelector";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "./components/ui/tabs";
+import { DeploymentFrequencyChart } from "./components/DeploymentFrequencyChart";
+import { DeploymentHeatmap } from "./components/DeploymentHeatmap";
+import { LeadTimeChart } from "./components/LeadTimeChart";
+import { MetricCard } from "./components/MetricCard";
+import { Repository, RepositorySelector } from "./components/RepositorySelector";
+import { TimeDistributionChart } from "./components/TimeDistributionChart";
+import { Button } from "./components/ui/button";
 import { Calendar } from "./components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "./components/ui/popover";
-import { Button } from "./components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "./components/ui/tabs";
 import { cn } from "./components/ui/utils";
-import { apiService, Repository as ApiRepository, DeploymentData, LeadTimeData, HeatmapData, TimeDistributionData, MetricSummary } from "./services/api";
+import Progress from "./imports/Progress";
+import { apiService, DeploymentData, HeatmapData, LeadTimeData, MetricSummary, TimeDistributionData } from "./services/api";
 
 // Les fonctions de génération de données sont maintenant dans apiService
 
@@ -82,13 +82,20 @@ export default function App() {
           apiService.getMetricsSummary(selectedRepositories, dateRange.from, dateRange.to)
         ]);
 
-        setDeploymentData(deploymentFreqData);
-        setLeadTimeData(leadTimeDataResult);
-        setHeatmapData(heatmapDataResult);
-        setTimeDistributionData(timeDistData);
-        setMetricsSummary(summaryData);
+        // S'assurer que les données existent avant de les définir
+        setDeploymentData(deploymentFreqData || []);
+        setLeadTimeData(leadTimeDataResult || []);
+        setHeatmapData(heatmapDataResult || []);
+        setTimeDistributionData(timeDistData || []);
+        setMetricsSummary(summaryData || null);
       } catch (error) {
         console.error('Error loading data:', error);
+        // En cas d'erreur, utiliser les données de fallback
+        setDeploymentData([]);
+        setLeadTimeData([]);
+        setHeatmapData([]);
+        setTimeDistributionData([]);
+        setMetricsSummary(null);
       } finally {
         setLoading(false);
       }
@@ -242,27 +249,27 @@ export default function App() {
             <>
               <MetricCard
                 title="Deployment Frequency"
-                value={`${metricsSummary.deploymentFrequency.value}/${metricsSummary.deploymentFrequency.unit}`}
-                change={metricsSummary.deploymentFrequency.trend}
+                value={`${metricsSummary.deploymentFrequency?.value || 0}/${metricsSummary.deploymentFrequency?.unit || 'per day'}`}
+                change={metricsSummary.deploymentFrequency?.trend || 0}
                 changeLabel="vs previous period"
-                status={metricsSummary.deploymentFrequency.status}
+                status={metricsSummary.deploymentFrequency?.status || 'medium'}
                 icon={<Rocket className="h-4 w-4" />}
               />
               <MetricCard
                 title="Lead Time for Changes"
-                value={`${metricsSummary.leadTime.value}${metricsSummary.leadTime.unit}`}
-                change={metricsSummary.leadTime.trend}
+                value={`${metricsSummary.leadTime?.value || 0}${metricsSummary.leadTime?.unit || 'hours'}`}
+                change={metricsSummary.leadTime?.trend || 0}
                 changeLabel="vs previous period"
-                status={metricsSummary.leadTime.status}
+                status={metricsSummary.leadTime?.status || 'medium'}
                 icon={<Clock className="h-4 w-4" />}
                 lowerIsBetter={true}
               />
               <MetricCard
                 title="Total Deployments"
-                value={metricsSummary.totalDeployments.value.toString()}
-                change={metricsSummary.totalDeployments.trend}
+                value={(metricsSummary.totalDeployments?.value || 0).toString()}
+                change={metricsSummary.totalDeployments?.trend || 0}
                 changeLabel="vs previous period"
-                status={metricsSummary.totalDeployments.status}
+                status={metricsSummary.totalDeployments?.status || 'medium'}
                 icon={<Activity className="h-4 w-4" />}
               />
             </>
